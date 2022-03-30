@@ -67,9 +67,9 @@ zinit wait'0a' lucid for \
 # the id-as"*_checkout" lines are because those plugins are installed elsewhere("gh-r" or the fuzzy metaplugin or ...), but only the binary. so, we have to check out the repo for the completions and man pages
   # from"gh-r" sbin starship/starship \
 zinit wait'0b' lucid for \
-  id-as'bandwhich' sbin'bin/bandwhich' cargo'bandwhich' nocompile atload'sudo setcap cap_sys_ptrace,cap_dac_read_search,cap_net_raw,cap_net_admin+ep bin/bandwhich' zdharma-continuum/null \
-  id-as'diskus' sbin'bin/diskus' cargo'diskus' nocompile zdharma-continuum/null \
-  id-as'hyperfine' sbin'bin/hyperfine' cargo'hyperfine' nocompile zdharma-continuum/null \
+  from'gh-r' sbin'**/bandwhich' nocompile atload'sudo setcap cap_sys_ptrace,cap_dac_read_search,cap_net_raw,cap_net_admin+ep bandwhich' imsnif/bandwhich \
+  from'gh-r' sbin'**/diskus' nocompile atclone'ln -sf diskus.1 "${ZPFX_MANPATH}"' sharkdp/diskus \
+  from'gh-r' sbin'**/hyperfine' nocompile sharkdp/hyperfine \
   from'gh-r' sbin'**/exa -> exa' atclone'cp -vf completions/exa.zsh _exa' nocompile ogham/exa  \
   from'gh-r' sbin'**/rg(.exe|) -> rg' mv'rip* ripgrep' nocompile BurntSushi/ripgrep \
   from"gh-r" sbin'dasel_linux_amd64 -> dasel' nocompile TomWright/dasel \

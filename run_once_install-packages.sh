@@ -1,5 +1,17 @@
 #!/usr/bin/env sh
 # make and stuff
-sudo apt install -y build-essential
-# rustup and cargo and rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+sudo apt update -y
+sudo apt install -y \
+  build-essential \
+  cmake \
+  libfontconfig1-dev \
+  libfreetype6-dev \
+  libxcb-xfixes0-dev \
+  libxkbcommon-dev \
+  lua5.3 \
+  luarocks \
+  npm \
+  pkg-config \
+  python3 \
+  ruby \
+;
