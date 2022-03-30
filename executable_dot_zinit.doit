@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+### zinit ###
+if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
+    print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.zinit" && command chmod g-rwX "$HOME/.zinit"
+    if command git clone https://github.com/zdharma-continuum/zinit.git "$HOME/.zinit/bin"; then
+        print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b"
+    else
+        print -P "%F{160}▓▒░ The clone has failed.%f%b"
+    fi
+    # shellcheck disable=1094
+    source "$HOME/.zinit/bin/zinit.zsh"
+    zinit self-update
+    zinit module build
+else
+  module_path+=("$HOME/.zinit/module/Src"); zmodload zdharma_continuum/zinit
+fi
+# shellcheck disable=1094
+source "$HOME/.zinit/bin/zinit.zsh"
+autoload -Uz _zinit
+# shellcheck disable=2154,2034
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# create manpath, do this after sourcing zinit.zsh to we can use ZPFX?
+ZPFX_MANPATH="$ZPFX/man/man1"
+mkdir -p "$ZPFX_MANPATH"
+# append
+# export MANPATH=":$ZPFX_MANPATH"
+
+# see https://github.com/zdharma-continuum/zinit#order-of-execution for the following order of mods
+# atinit -> atpull! -> make'!!' -> mv -> cp -> make! -> atclone/atpull -> make -> (plugin script loading) -> src -> multisrc -> atload
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+# the annexes, console-tools, and fuzzy are all meta-plugins. they install loads of stuff
+zinit light-mode for \
+  romkatv/powerlevel10k \
+  zdharma-continuum/zinit-annex-meta-plugins \
+  annexes \
+  ;
+
+  # pack"bgn-binary+keys" fzf zdharma-continuum/null \
+  # id-as"lotabout_skim_checkout" depth'1' sbin'bin/sk-tmux' pick"shell/completion.zsh" src"shell/key-bindings.zsh" atclone'ln -sf "${PWD}"/man/man1/* "${ZPFX_MANPATH}"' atpull'%atclone' has'sk' lotabout/skim \
+zinit wait'0a' lucid for \
+  OMZL::key-bindings.zsh \
+  '@sharkdp' \
+  from"gh-r" sbin'sk' \
+    dl'https://raw.githubusercontent.com/lotabout/skim/master/shell/completion.zsh -> _sk;
+       https://raw.githubusercontent.com/lotabout/skim/master/shell/key-bindings.zsh -> key-bindings.zsh' \
+    src'key-bindings.zsh' nocompile lotabout/skim \
+  OMZL::functions.zsh \
+  OMZL::misc.zsh \
+  OMZL::termsupport.zsh \
+  OMZL::history.zsh \
+  OMZL::completion.zsh \
+  OMZL::clipboard.zsh \
+  skywind3000/z.lua \
+  Aloxaf/fzf-tab \
+  chitoku-k/fzf-zsh-completions \
+  blockf clarketm/zsh-completions \
+  MichaelAquilina/zsh-you-should-use \
+  pick'autopair.zsh' hlissner/zsh-autopair \
+  from"gh-r" sbin mv'direnv* -> direnv' atclone'./direnv hook zsh > zhook.zsh' atpull'%atclone' src"zhook.zsh" nocompile direnv/direnv \
+  ;
+
+# TODO: move alacritty from /usr/bin to polaris or something. requires modifying the .info file, i think.
+# the id-as"*_checkout" lines are because those plugins are installed elsewhere("gh-r" or the fuzzy metaplugin or ...), but only the binary. so, we have to check out the repo for the completions and man pages
+  # from"gh-r" sbin starship/starship \
+zinit wait'0b' lucid for \
+  id-as'bandwhich' sbin'bin/bandwhich' cargo'bandwhich' nocompile atload'sudo setcap cap_sys_ptrace,cap_dac_read_search,cap_net_raw,cap_net_admin+ep bin/bandwhich' zdharma-continuum/null \
+  id-as'diskus' sbin'bin/diskus' cargo'diskus' nocompile zdharma-continuum/null \
+  id-as'hyperfine' sbin'bin/hyperfine' cargo'hyperfine' nocompile zdharma-continuum/null \
+  from'gh-r' sbin'**/exa -> exa' atclone'cp -vf completions/exa.zsh _exa' nocompile ogham/exa  \
+  from'gh-r' sbin'**/rg(.exe|) -> rg' mv'rip* ripgrep' nocompile BurntSushi/ripgrep \
+  from"gh-r" sbin'dasel_linux_amd64 -> dasel' nocompile TomWright/dasel \
+  from"gh-r" sbin"**/delta" nocompile dandavison/delta \
+  from"gh-r" sbin nocompile arl/gitmux \
+  from"gh-r" sbin bpick"*linux_x86_64.tar.gz" nocompile charmbracelet/glow \
+  from"gh-r" sbin'jq-linux64 -> jq' nocompile stedolan/jq \
+  from"gh-r" sbin nocompile jesseduffield/lazygit \
+  from"gh-r" sbin nocompile srid/neuron \
+  from"gh-r" sbin'rust-analyzer* -> rust-analyzer' nocompile rust-analyzer/rust-analyzer \
+  from"gh-r" sbin nocompile Kampfkarren/selene \
+  from'gh-r' sbin'**/shellcheck' nocompile 'koalaman/shellcheck' \
+  from'gh-r' sbin'shfmt_* -> shfmt' nocompile '@mvdan/sh' \
+  from"gh-r" sbin'stylua' JohnnyMorganz/StyLua \
+  from"gh-r" sbin'**/rclone' nocompile rclone/rclone \
+  from"gh-r" sbin nocompile '@github/git-sizer' \
+  from"gh-r" bpick'buf-Linux-x86_64.tar.gz' pick'**/zsh/**/_buf' sbin'**/bin/*' bufbuild/buf \
+  sbin"bin/git-fuzzy" nocompile bigH/git-fuzzy \
+  from"gh-r" cloneonly nocompletions nocompile bpick"*linux64.tar.gz" atclone"rm /usr/bin/nvim; sudo cp -a nvim-linux64/* /usr" atpull'%atclone' ver"nightly" neovim/neovim \
+  sbin"target/release/alacritty" nocompile atclone"cargo build --release;
+    sudo tic -xe alacritty,alacritty-direct extra/alacritty.info;
+    sudo cp extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg;
+    sudo desktop-file-install extra/linux/Alacritty.desktop --set-key=TryExec --set-value=$ZPFX/bin/alacritty --set-key=Exec --set-value=$ZPFX/bin/alacritty;
+    sudo update-desktop-database;
+    sudo mkdir -p /usr/local/share/man/man1;
+    gzip -c extra/alacritty.man | sudo tee /usr/local/share/man/man1/alacritty.1.gz > /dev/null" alacritty/alacritty \
+  OMZP::copybuffer \
+  OMZP::git \
+  OMZP::themes \
+  id-as'podman-completion' has'podman' run-atpull atclone'podman completion zsh -f _podman' atpull'%atclone' nocompile zdharma-continuum/null \
+  id-as'1password-completion' has'op' atclone'op completion zsh > _op' nocompile zdharma-continuum/null \
+  id-as"dandavison_delta_checkout" depth'1' pick"etc/completion/completion.zsh" has"delta" dandavison/delta \
+  id-as'node-stuff' nocompletions nocompile node'!bash-language-server;' zdharma-continuum/null \
+  id-as'bcat' nocompletions nocompile gem'!bcat' zdharma-continuum/null \
+  ;
+
+# this group are ones that have '' and cause a shellcheck issue. figured it's better to only disable the shellcheck for those that need it?
+# the id-as"*_checkout" lines are because those plugins are installed elsewhere("gh-r" or the fuzzy metaplugin or ...), but only the binary. so, we have to check out the repo for the completions and man pages
+# rationale is that it is faster to not do a cargo build if we can help it...
+# shellcheck disable=2016
+zinit wait'0b' lucid for \
+  from"gh-r" sbin bpick'fnm-linux.zip' atclone"chmod +x ./fnm; ./fnm completions > _fnm" atload'eval "$(fnm env)"' atpull'%atclone' run-atpull nocompile Schniz/fnm \
+  sbin cloneonly atclone'sh autogen.sh; ./configure; ln -sf "$PWD/tmux.1" "${ZPFX_MANPATH}"' atpull'%atclone' make ver='3.3-rc' tmux/tmux \
+  sbin'bin/slop' cloneonly atclone'cmake .; ln -sf "$PWD/slop.1" "${ZPFX_MANPATH}"' atpull'%atclone' make naelstrof/slop\
+  id-as'github-cli' from"gh-r" sbin'usr/bin/gh' atclone'ln -sf "$PWD/usr/share/man/man1/*" "${ZPFX_MANPATH}"' atpull'%atclone' nocompile cli/cli \
+  ;
+
+  # molovo \
+zinit wait'0c' lucid for \
+  atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay;" atload"_zsh_autosuggest_start; bindkey '^ ' autosuggest-accept" zsh-users+fast \
+  ;
+
+# this is super slow, like 250ms slow...
+zinit ice wait"0y" lucid if'[[ -f /home/me/.bni/develop.rc ]]'
+zinit snippet /home/me/.bni/develop.rc
+
+finish_load() {
+  # add anything else that needs to happen after everything else is done.
+  :
+}
+zinit wait'0z' lucid for \
+  atload"finish_load" zdharma-continuum/null \
+  ;
