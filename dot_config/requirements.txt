@@ -1,0 +1,9 @@
+python-language-server
+ipython
+black
+pyls-black
+mypy
+mypy-protobuf
+isort
+pyre-check
+pytest

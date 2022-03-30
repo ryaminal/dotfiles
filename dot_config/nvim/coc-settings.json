@@ -1,0 +1,54 @@
+{
+  "languageserver": {
+    "ccls": {
+      "command": "ccls",
+      "args": ["--log-file=/tmp/ccls.log", "-v=1"],
+      "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"],
+      "rootPatterns": [".ccls", "compile_commands.json"],
+      "initializationOptions": {
+         "cache": {
+           "directory": "/tmp/ccls"
+         },
+         "client": {
+          "snippetSupport": true
+         }
+       }
+    },
+    "terraform": {
+      "command": "terraform-lsp",
+      "filetypes": ["tf"],
+      "initializationOptions": {}
+    }
+  },
+  "diagnostic-languageserver.filetypes": {
+    "sh": "shellcheck"
+  },
+  "diagnostic-languageserver.formatFiletypes": {
+    "sh": "shfmt"
+  },
+  "diagnostic-languageserver.formatters": {
+    "shfmt": {
+      "command": "shfmt",
+      "args": ["-i", "2", "-bn", "-ci", "-sr", "-s"]
+    }
+  },
+  "suggest.echodocSupport": true,
+  "suggest.noselect": false,
+
+  "coc.preferences.formatOnSaveFiletypes": [],
+  "coc.preferences.currentFunctionSymbolAutoUpdate": true,
+
+  "sh.enable": true,
+  "sh.trace.server": "verbose",
+  "sh.highlightParsingErrors": true,
+
+  "diagnostic.enableMessage": "always",
+  "diagnostic.messageTarget": "float",
+  "diagnostic.infoSign": "i",
+  "diagnostic.warningSign": "w",
+  "diagnostic.errorSign": "e",
+  "diagnostic.hintSign": "h",
+
+  "python.formatting.provider": "black",
+  "python.linting.mypyEnabled": true
+}
