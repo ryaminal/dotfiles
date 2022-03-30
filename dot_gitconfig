@@ -1,0 +1,32 @@
+[user]
+  email = rdespain@butterflynetinc.com
+  name = arr
+[color]
+  ui = auto
+[alias]
+  update = !git pull && git submodule update --init --recursive
+[diff]
+  submodule = log
+[submodule]
+  fetchJobs = 8
+  recurse = true
+[core]
+  excludesfile = /home/me/.gitignore
+  pager = delta
+[delta]
+  syntax-theme = Solarized (dark)
+  # dark = true
+  side-by-side = true
+  line-numbers = true
+[interactive]
+  diffFilter = delta --color-only
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+[pull]
+  rebase = false
+[http]
+	cookiefile = /home/me/.gitcookies
+	postBuffer = 524288000
